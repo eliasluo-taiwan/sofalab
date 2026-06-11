@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    ============================================================
+    Sofa Lab 商品介紹頁 Template v2
+    設計原則：AJ2 式動態特色區塊 + WordPress ACF 預留對應
+    ============================================================
+
+    WordPress 對應說明：
+    ┌─────────────────────────────────────────────────────┐
+    │ 區塊                    │ WP 來源                    │
+    ├─────────────────────────────────────────────────────┤
+    │ Nav / Footer            │ theme (header.php, footer) │
+    │ 麵包屑                   │ WP breadcrumb plugin       │
+    │ 商品 Hero (圖/名/價/述)  │ ACF: hero_* 欄位            │
+    │ 🔁 特色區塊 (無限延伸)   │ ACF Repeater: feature_blocks│
+    │ 📦 四個步驟             │ theme template part (全站共用) │
+    │ 📋 商品資訊 Tab               │                            │
+    │   ├ 自訂分頁 (可新增)         │ ACF Repeater: tabs          │
+    │   │  ├ tab_title              │ Text: 分頁名稱              │
+    │   │  └ tab_content            │ WYSIWYG: 分頁內容           │
+    │   └ 配送與退貨 (固定分頁)     │ Options Page (全站共用)      │
+    │ 情境照片                 │ ACF Gallery: gallery        │
+    │ CTA 橫幅                │ theme template part         │
+    │ 相關產品                 │ WP_Query by category        │
+    └─────────────────────────────────────────────────────┘
+  -->
+
+  <!-- ⚠️ 以下欄位在 WP 後台由行銷人員編輯 ⚠️ -->
+  <!-- ACF Field: hero_title -->
+  <title>Haku 系列 — Sofa Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --max-w: 1280px;
+      --gutter: clamp(24px, 6vw, 80px);
+      --dark: #1a1a1a;
+      --gray-50: #fafafa;
+      --gray-100: #f5f5f5;
+      --gray-200: #e8e8e8;
+      --gray-300: #d0d0d0;
+      --gray-500: #999;
+      --gray-700: #555;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+      color: var(--dark);
+      background: #fff;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ═══ NAV (WP: header.php) ═══ */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(250,250,250,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .nav__inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 var(--gutter);
+      display: flex; align-items: center; height: 64px; gap: 48px;
+    }
+    .nav__logo { font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; flex-shrink: 0; color: var(--dark); }
+    .nav__links { display: flex; gap: 32px; font-size: 13px; color: var(--gray-700); }
+    .nav__links a { transition: color .15s; }
+    .nav__links a:hover { color: var(--dark); }
+    .nav__links a.active { font-weight: 700; color: var(--dark); position: relative; }
+    .nav__links a.active::after {
+      content: ""; position: absolute; bottom: -4px; left: 0;
+      width: 100%; height: 2px; background: var(--dark); border-radius: 2px;
+    }
+    .nav__cta {
+      margin-left: auto; padding: 9px 22px; background: var(--dark); color: #fff;
+      font-size: 13px; font-weight: 400; border-radius: 8px;
+      transition: opacity .15s; white-space: nowrap; letter-spacing: .3px;
+    }
+    .nav__cta:hover { opacity: .8; }
+    .nav__hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; margin-left: auto; }
+    .nav__hamburger span { display: block; width: 22px; height: 1.5px; background: var(--dark); border-radius: 2px; }
+
+    /* ═══ BREADCRUMB ═══ */
+    .breadcrumb { padding: 16px 0; background: #fff; }
+    .breadcrumb__inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 var(--gutter);
+      font-size: 12px; color: var(--gray-500);
+    }
+    .breadcrumb__inner a { transition: color .15s; }
+    .breadcrumb__inner a:hover { color: var(--dark); }
+    .breadcrumb__inner span { color: var(--gray-300); margin: 0 6px; }
+
+    /* ═══ PRODUCT HERO ═══ */
+    /* ACF: hero_image, hero_series, hero_name, hero_desc */
+    .product-hero { padding: 40px 0; background: #fff; }
+    .product-hero__grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 480px; gap: 48px; align-items: center;
+    }
+    .product-hero__img {
+      position: relative; background: var(--gray-200);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; border-radius: 8px; min-height: 400px;
+    }
+    .product-hero__img img { width: 100%; height: 100%; object-fit: cover; }
+    .product-hero__img::before {
+      content: ""; position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(0,0,0,.03) 30px, rgba(0,0,0,.03) 31px),
+        repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(0,0,0,.03) 30px, rgba(0,0,0,.03) 31px);
+      z-index: 0;
+    }
+    .product-hero__img-label { position: relative; z-index: 1; font-size: 12px; color: rgba(0,0,0,.3); text-align: center; padding: 0 24px; }
+    .product-hero__info { display: flex; flex-direction: column; justify-content: center; padding: 64px var(--gutter); }
+    .product-hero__series { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 10px; }
+    .product-hero__name { font-size: clamp(32px, 4vw, 44px); font-weight: 700; color: var(--dark); line-height: 1.2; margin-bottom: 12px; letter-spacing: -.5px; }
+    .product-hero__desc { font-size: 15px; color: var(--gray-700); line-height: 1.7; margin-bottom: 12px; max-width: 420px; }
+    .product-hero__price { font-size: 24px; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+    .product-hero__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-dark { display: inline-block; padding: 13px 32px; background: var(--dark); color: #fff; font-size: 14px; font-weight: 600; border-radius: 8px; transition: opacity .15s; }
+    .btn-dark:hover { opacity: .8; }
+    .btn-outline-dark { display: inline-block; padding: 13px 28px; border: 1.5px solid var(--gray-300); color: var(--dark); font-size: 14px; font-weight: 500; border-radius: 8px; transition: all .15s; }
+    .btn-outline-dark:hover { border-color: var(--dark); }
+
+    /* ═══ 🔁 FEATURE BLOCKS (ACF Repeater) ═══ */
+    /*
+      ACF Repeater Field: feature_blocks
+        - feature_image  (Image)
+        - feature_title  (Text)
+        - feature_desc   (Textarea / WYSIWYG)
+
+      PHP Loop (示意):
+        <?php $i = 0; while (have_rows('feature_blocks')): the_row(); $i++; ?>
+          <div class="feature<?= $i % 2 === 0 ? ' feature--reverse' : '' ?>">
+            ...
+          </div>
+        <?php endwhile; ?>
+    */
+    .features {
+      padding: 40px 0;
+      margin-top: 20px;
+    }
+    .feature {
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 48px;
+      padding: 40px 0;
+    }
+    .feature--reverse .feature__img { order: 2; }
+    .feature--reverse .feature__text { order: 1; }
+    .feature__img {
+      aspect-ratio: 4/3;
+      background: var(--gray-200);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .feature__img img { width: 100%; height: 100%; object-fit: cover; }
+    .feature__img-placeholder { font-size: 12px; color: rgba(0,0,0,.25); text-align: center; }
+    .feature__text {
+      max-width: 480px;
+    }
+    .feature__title { font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; color: var(--dark); margin-bottom: 16px; line-height: 1.35; }
+    .feature__desc { font-size: 14px; color: var(--gray-700); line-height: 1.9; }
+
+    /* ═══ STEPS (四個步驟 — 全站共用) ═══ */
+    .steps-overview {
+      background: var(--gray-50);
+      padding: 64px 0;
+    }
+    .steps-overview__title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 40px;
+    }
+    .steps-grid-wrapper {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      gap: 0;
+      align-items: center;
+    }
+    .step-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px 20px 28px;
+    }
+    .step-card__num {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .step-card__title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    .step-card__desc {
+      font-size: 12px;
+      color: var(--gray-500);
+      line-height: 1.7;
+    }
+    .step-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--gray-500);
+      padding: 0 8px;
+    }
+
+    /* ═══ TABS (ACF: product_detail, dimensions, delivery_returns) ═══ */
+    .tabs { padding: 72px 0; background: var(--gray-50); }
+    .tabs__nav {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--gray-200);
+      margin-bottom: 40px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tabs__nav::-webkit-scrollbar { display: none; }
+    .tabs__btn {
+      padding: 14px 28px;
+      font-size: 14px; font-weight: 500;
+      color: var(--gray-500);
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .tabs__btn:hover { color: var(--dark); }
+    .tabs__btn.active { color: var(--dark); font-weight: 700; border-bottom-color: var(--dark); }
+    .tabs__panel { display: none; }
+    .tabs__panel.active { display: block; }
+    .tabs__panel-body { font-size: 14px; color: var(--gray-700); line-height: 1.9; max-width: 720px; }
+    .tabs__panel-body h3 { font-size: 16px; font-weight: 700; color: var(--dark); margin: 28px 0 8px; }
+    .tabs__panel-body p { margin-bottom: 12px; }
+    .dims-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .dims-list li { padding: 18px 20px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; color: var(--dark); line-height: 1.7; }
+    .dims-list li strong { display: block; font-size: 12px; letter-spacing: .5px; color: var(--gray-500); margin-bottom: 2px; }
+    .delivery-content { font-size: 14px; color: var(--gray-700); line-height: 1.9; }
+    .delivery-content p { margin-bottom: 12px; }
+    .delivery-content ul { list-style: none; margin-bottom: 16px; }
+    .delivery-content ul li { padding: 4px 0 4px 16px; position: relative; }
+    .delivery-content ul li::before { content: "·"; position: absolute; left: 4px; color: var(--dark); font-weight: 700; }
+
+    /* ═══ GALLERY (ACF Gallery) ═══ */
+    .gallery { padding: 72px 0; }
+    .gallery__label { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; }
+    .gallery__title { font-size: 24px; font-weight: 700; color: var(--dark); margin-bottom: 32px; letter-spacing: -.3px; }
+    .gallery-scroll {
+      display: flex; gap: 16px; overflow-x: auto;
+      scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; padding-bottom: 8px;
+    }
+    .gallery-scroll::-webkit-scrollbar { display: none; }
+    .gallery-item {
+      flex: 0 0 clamp(280px, 33vw, 400px); aspect-ratio: 4/3;
+      background: var(--gray-200); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ═══ RELATED PRODUCTS (WP_Query) ═══ */
+    .related { padding: 72px 0; background: var(--gray-50); }
+    .related__label { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; }
+    .related__title { font-size: 24px; font-weight: 700; color: var(--dark); margin-bottom: 32px; letter-spacing: -.3px; }
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .card { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid var(--gray-200); transition: box-shadow .25s, transform .25s; }
+    .card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.1); transform: translateY(-3px); }
+    .card__img { width: 100%; height: 200px; background: var(--gray-200); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .card__img img { width: 100%; height: 100%; object-fit: cover; }
+    .card__body { padding: 18px 18px 20px; }
+    .card__series { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 4px; }
+    .card__name { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .card__spec { font-size: 13px; color: var(--gray-500); margin-bottom: 16px; }
+    .card__arrow { font-size: 13px; color: var(--dark); font-weight: 600; }
+    .card__arrow:hover { opacity: .7; }
+
+    /* ═══ CTA (WP: template part) ═══ */
+    .cta-band { background: #f0ebe3; border-top: 1px solid #e0d9cf; text-align: center; padding: 64px 20px; }
+    .cta-band__inner { max-width: 640px; margin: 0 auto; }
+    .cta-band__eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #b5a99a; margin-bottom: 18px; }
+    .cta-band__title { font-size: 28px; font-weight: 700; color: var(--dark); line-height: 1.4; margin-bottom: 12px; }
+    .cta-band__sub { font-size: 16px; color: #8a7f74; line-height: 1.7; margin-bottom: 28px; }
+    .cta-band__btn { display: inline-block; padding: 16px 40px; background: var(--dark); color: #fff; font-size: 17px; font-weight: 600; transition: background .2s; }
+    .cta-band__btn:hover { background: #333; }
+
+    /* ═══ FOOTER (WP: footer.php) ═══ */
+    .footer { background: #1e1a15; padding: 40px 0 32px; }
+    .footer__grid {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 var(--gutter);
+      display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px;
+    }
+    .footer__brand-name { font-size: 14px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,.9); margin-bottom: 8px; }
+    .footer__brand-tagline { font-size: 13px; color: rgba(255,255,255,.4); line-height: 1.7; max-width: 200px; }
+    .footer__col-title { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 12px; }
+    .footer__col a, .footer__col p { display: block; font-size: 13px; color: rgba(255,255,255,.6); margin-bottom: 6px; line-height: 1.5; transition: color .15s; }
+    .footer__col a:hover { color: rgba(255,255,255,.95); }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 1024px) {
+      :root { --gutter: 40px; }
+      .product-hero__grid { grid-template-columns: 1fr; min-height: auto; }
+      .product-hero__img { min-height: 320px; }
+      .feature { grid-template-columns: 1fr; gap: 24px; }
+      .feature--reverse .feature__img { order: -1; }
+      .feature--reverse .feature__text { order: 1; }
+      .related-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid-wrapper { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .step-arrow { display: none; }
+      .footer__grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --gutter: 24px; }
+      .nav__links { display: none; }
+      .nav__hamburger { display: flex; }
+      .nav.open .nav__links {
+        display: flex; flex-direction: column; position: absolute;
+        top: 64px; left: 0; right: 0; background: var(--gray-50);
+        padding: 20px 24px; border-bottom: 1px solid var(--gray-200);
+        box-shadow: 0 8px 24px rgba(0,0,0,.08);
+      }
+      .product-hero__name { font-size: 28px; }
+      .related-grid { grid-template-columns: 1fr; }
+      .dims-list { grid-template-columns: 1fr 1fr; }
+
+      .steps-overview__title { font-size: 22px; }
+      .steps-grid-wrapper { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      :root { --gutter: 16px; }
+      .product-hero__img { min-height: 260px; }
+      .product-hero__name { font-size: 26px; }
+      .cta-band__btn { width: 100%; }
+      .footer__grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+      .dims-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!--
+    ═══════════════════════════════════════════
+    NAV (WP: header.php — 全站共用，不需編輯)
+    ═══════════════════════════════════════════
+  -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="../index.html" class="nav__logo">Sofa Lab</a>
+      <div class="nav__links">
+        <a href="../index.html">首頁</a>
+        <a href="../about.html">關於我們</a>
+        <a href="../sofa-series.html" class="active">產品系列</a>
+        <a href="../customize-process.html">客製化流程</a>
+        <a href="../lab-notes.html">Lab Notes</a>
+      </div>
+      <div class="nav__hamburger" onclick="document.getElementById('nav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </div>
+      <a href="#cta" class="nav__cta">預約體驗</a>
+    </div>
+  </nav>
+
+  <!--
+    ═══════════════════════════════════════════
+    BREADCRUMB (WP: breadcrumb plugin)
+    ═══════════════════════════════════════════
+  -->
+  <!-- ACF: product_category_name, product_name -->
+  <div class="breadcrumb">
+    <div class="breadcrumb__inner">
+      <a href="../index.html">首頁</a><span>/</span>
+      <a href="../sofa-series.html">產品系列</a><span>/</span>
+      Haku 系列
+    </div>
+  </div>
+
+  <!--
+    ═══════════════════════════════════════════
+    PRODUCT HERO (ACF Fields — 行銷人員可編輯)
+      hero_image: 商品主圖
+      hero_series: 系列英文名
+      hero_name: 商品中文名
+      hero_desc: 商品一句描述
+      hero_price: 價格
+    ═══════════════════════════════════════════
+  -->
+  <section class="product-hero">
+    <div class="container">
+      <div class="product-hero__grid">
+    <div class="product-hero__img">
+      <!-- ACF: hero_image -->
+      <span class="product-hero__img-label">上傳商品主圖</span>
+    </div>
+    <div class="product-hero__info">
+      <!-- ACF: hero_series -->
+      <p class="product-hero__series">Haku Series</p>
+      <!-- ACF: hero_name -->
+      <h1 class="product-hero__name">A 款沙發</h1>
+      <!-- ACF: hero_desc -->
+      <p class="product-hero__desc">雙人 / 三人 · 布料可選。比例經典、線條簡練，適合各種居家風格。</p>
+      <!-- ACF: hero_price -->
+      <div class="product-hero__price">NT$XX,XXX 起</div>
+      <div class="product-hero__actions">
+        <a href="#cta" class="btn-dark">我對這款有興趣</a>
+        <a href="../customize-process.html" class="btn-outline-dark">了解客製流程 →</a>
+      </div>
+    </div>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ═══════════════════════════════════════════
+    TABS
+      🔁 ACF Repeater: tabs (行銷人員可新增/刪除/排序)
+          ┌──────────────────────────────────┐
+          │ tab_title:   Text (分頁名稱)       │
+          │ tab_content: WYSIWYG (分頁內容)   │
+          └──────────────────────────────────┘
+      固定分頁: 配送與退貨 (Options Page，全站共用)
+
+      PHP Loop 示意:
+      <?php $i = 0; while(have_rows('tabs')): the_row(); $i++; ?>
+        <button class="tabs__btn<?= $i === 1 ? ' active' : '' ?>">
+          <?= get_sub_field('tab_title') ?>
+        </button>
+      <?php endwhile; ?>
+      <button class="tabs__btn">配送與退貨</button>
+
+      <?php $i = 0; while(have_rows('tabs')): the_row(); $i++; ?>
+        <div class="tabs__panel<?= $i === 1 ? ' active' : '' ?>">
+          <div class="tabs__panel-body"><?= get_sub_field('tab_content') ?></div>
+        </div>
+      <?php endwhile; ?>
+      <div class="tabs__panel">
+        <div class="delivery-content"><?= the_field('delivery_returns', 'option') ?></div>
+      </div>
+    ═══════════════════════════════════════════
+  -->
+  <section class="tabs">
+    <div class="container">
+      <div class="tabs__nav" role="tablist">
+        <!-- 🔁 ACF Repeater Loop: tabs 開始 -->
+        <button class="tabs__btn active" role="tab">商品詳細說明</button>
+        <button class="tabs__btn" role="tab">尺寸規格</button>
+        <!-- 🔁 行銷人員可在此插入更多分頁按鈕 -->
+        <!-- 固定分頁：配送與退貨 (全站共用) -->
+        <button class="tabs__btn" role="tab">配送與退貨</button>
+      </div>
+
+      <!-- 🔁 ACF Repeater Loop: tabs panels 開始 -->
+      <div class="tabs__panel active" role="tabpanel">
+        <div class="tabs__panel-body">
+          <h3>關於 Haku 系列</h3>
+          <p>Haku 系列以經典比例與簡練線條為設計核心，適合各種居家風格。從日式極簡到北歐清新，都能輕鬆融入。</p>
+          <h3>面料選擇</h3>
+          <p>貓抓布：高耐磨係數，家有毛孩首選。<br>亞麻布：透氣親膚，夏天久坐不悶。<br>棉麻混紡：手感自然，日常實用最推薦。<br>頭層牛皮：質感加分，越用越有韻味。</p>
+          <h3>內部結構</h3>
+          <p>實木框架 → 高密度泡棉 → 獨立筒彈簧支撐層 → S 型彈簧底層，多層次支撐設計確保長期使用仍保持舒適。</p>
+          <h3>台灣監製，品質把關</h3>
+          <p>全程由 Sofa Lab 團隊監製，從裁布到車縫到組裝，每個環節都有專人檢查。出問題找我們，不是找工廠。</p>
+        </div>
+      </div>
+
+      <div class="tabs__panel" role="tabpanel">
+        <ul class="dims-list">
+          <li><strong>雙人</strong>W180 × D95 × H85 cm / 座深55 / 座高42</li>
+          <li><strong>三人</strong>W210 × D95 × H85 cm / 座深55 / 座高42</li>
+          <li><strong>L 型</strong>W280 × D180 × H85 cm / 座深55 / 座高42</li>
+          <li><strong>客製尺寸</strong>歡迎討論特殊尺寸需求</li>
+        </ul>
+      </div>
+
+      <!-- 固定分頁：配送與退貨 (Options Page，全站共用) -->
+      <div class="tabs__panel" role="tabpanel">
+        <div class="delivery-content">
+          <p>Sofa Lab 的配送與退貨政策：</p>
+          <ul>
+            <li>雙北地區含基本配送與搬運組裝服務</li>
+            <li>其他縣市依地區另計運費，報價時確認</li>
+            <li>配送時間依款式不同約 6–12 週</li>
+            <li>收到商品後 14 天內如有問題，Sofa Lab 全責處理</li>
+            <li>大型家具配送需配合物流車趟安排</li>
+          </ul>
+          <p>詳細政策請洽 Sofa Lab 客服。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ═══════════════════════════════════════════
+    🔁 FEATURE BLOCKS (ACF Repeater: feature_blocks)
+      行銷人員在後台點「新增區塊」即可無限擴充
+      系統自動將奇數區塊圖片放左邊、偶數放右邊
+
+      ACF Repeater 設定:
+      ┌──────────────────────────────────────┐
+      │ Field Name: feature_blocks           │
+      │ Sub Fields:                          │
+      │  - feature_image    (Image)          │
+      │  - feature_title    (Text)           │
+      │  - feature_desc     (WYSIWYG)        │
+      └──────────────────────────────────────┘
+
+      PHP Loop 範例:
+      <?php $i = 0; while(have_rows('feature_blocks')): the_row(); $i++; ?>
+        <div class="feature<?= $i % 2 === 0 ? ' feature--reverse' : '' ?>">
+          <div class="feature__img"><?= wp_get_attachment_image(get_sub_field('feature_image'), 'large') ?></div>
+          <div class="feature__text">
+            <h2 class="feature__title"><?= get_sub_field('feature_title') ?></h2>
+            <div class="feature__desc"><?= get_sub_field('feature_desc') ?></div>
+          </div>
+        </div>
+      <?php endwhile; ?>
+    ═══════════════════════════════════════════
+  -->
+  <section class="features">
+    <div class="container">
+    <!-- 區塊 1（文字在左，與 Hero 主視覺節奏直接切開） -->
+    <div class="feature feature--reverse">
+      <div class="feature__img">
+        <!-- ACF: feature_image -->
+        <span class="feature__img-placeholder">上傳特色圖片</span>
+      </div>
+      <div class="feature__text">
+        <!-- ACF: feature_title -->
+        <h2 class="feature__title">多種面料可選，觸感由你決定</h2>
+        <!-- ACF: feature_desc -->
+        <div class="feature__desc">提供多種面料選擇，從高耐磨貓抓布到天然亞麻，每種材質皆經過耐用度測試，確保日常使用不易起毛球、褪色。多種色卡可到門市實際觸摸挑選。</div>
+      </div>
+    </div>
+
+    <!-- 區塊 2 -->
+    <div class="feature">
+      <div class="feature__img">
+        <span class="feature__img-placeholder">上傳特色圖片</span>
+      </div>
+      <div class="feature__text">
+        <h2 class="feature__title">實木框架 + 獨立筒，紮實穩固</h2>
+        <div class="feature__desc">實木框架搭配高密度泡棉與獨立筒彈簧支撐層，結構穩固耐用。坐墊採用多層次填充設計，支撐與舒適兼具，久坐不塌陷。</div>
+      </div>
+    </div>
+
+    <!-- 區塊 3 -->
+    <div class="feature feature--reverse">
+      <div class="feature__img">
+        <span class="feature__img-placeholder">上傳特色圖片</span>
+      </div>
+      <div class="feature__text">
+        <h2 class="feature__title">客製尺寸，精準貼合你的空間</h2>
+        <div class="feature__desc">雙人 / 三人 / L 型皆可選，也可依你的空間微調尺寸。不需妥協市售公版規格，讓沙發完美融入每個角落。</div>
+      </div>
+    </div>
+
+    <!-- 區塊 4 -->
+    <div class="feature">
+      <div class="feature__img">
+        <span class="feature__img-placeholder">上傳特色圖片</span>
+      </div>
+      <div class="feature__text">
+        <h2 class="feature__title">腳座樣式自由選</h2>
+        <div class="feature__desc">實木腳（橡木色 / 胡桃色）或金屬腳（黑 / 銀），依照你的居家風格自由搭配，小細節也不妥協。</div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!--
+    ═══════════════════════════════════════════
+    STEPS (四個步驟 — template part，全站共用)
+    ═══════════════════════════════════════════
+  -->
+  <section class="steps-overview">
+    <div class="container">
+      <h2 class="steps-overview__title">四個步驟，完成你的專屬沙發</h2>
+      <div class="steps-grid-wrapper">
+        <div class="step-card">
+          <div class="step-card__num">01</div>
+          <div class="step-card__title">挑選款式外型</div>
+          <div class="step-card__desc">說說你的需求<br>我們幫你找到最合適的款式</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-card__num">02</div>
+          <div class="step-card__title">部件挑選與報價</div>
+          <div class="step-card__desc">挑選面料與各式部件<br>即時透明報價，無隱藏費用</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-card__num">03</div>
+          <div class="step-card__title">確認製作</div>
+          <div class="step-card__desc">確認細節後下訂<br>台灣監製全程把關品質</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-card__num">04</div>
+          <div class="step-card__title">沙發配送</div>
+          <div class="step-card__desc">送達到府組裝<br>售後問題找 Sofa Lab</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ═══════════════════════════════════════════
+    GALLERY (ACF Gallery: gallery)
+      行銷人員上傳多張情境圖，前端自動渲染
+    ═══════════════════════════════════════════
+  -->
+  <section class="gallery">
+    <div class="container">
+      <p class="gallery__label">Gallery</p>
+      <h2 class="gallery__title">情境照片</h2>
+      <!-- ACF Gallery Loop -->
+      <div class="gallery-scroll">
+        <div class="gallery-item"><span style="font-size:12px;color:rgba(0,0,0,.25)">上傳情境圖 1</span></div>
+        <div class="gallery-item"><span style="font-size:12px;color:rgba(0,0,0,.25)">上傳情境圖 2</span></div>
+        <div class="gallery-item"><span style="font-size:12px;color:rgba(0,0,0,.25)">上傳情境圖 3</span></div>
+        <div class="gallery-item"><span style="font-size:12px;color:rgba(0,0,0,.25)">上傳情境圖 4</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ═══════════════════════════════════════════
+    RELATED PRODUCTS (WP_Query by category)
+      自動拉同分類的其他商品
+    ═══════════════════════════════════════════
+  -->
+  <section class="related">
+    <div class="container">
+      <p class="related__label">You May Also Like</p>
+      <h2 class="related__title">相關產品</h2>
+      <!-- WP_Query Loop -->
+      <div class="related-grid">
+        <a href="nori.html" class="card">
+          <div class="card__img"><span style="font-size:12px;color:rgba(0,0,0,.25)">AI 示意圖</span></div>
+          <div class="card__body">
+            <p class="card__series">Nori Series</p>
+            <p class="card__name">B 款沙發</p>
+            <p class="card__spec">L 型 · 可拆式模組</p>
+            <span class="card__arrow">查看詳情 →</span>
+          </div>
+        </a>
+        <a href="mato.html" class="card">
+          <div class="card__img"><span style="font-size:12px;color:rgba(0,0,0,.25)">AI 示意圖</span></div>
+          <div class="card__body">
+            <p class="card__series">Mato Series</p>
+            <p class="card__name">C 款沙發</p>
+            <p class="card__spec">單人 · 腳座可選</p>
+            <span class="card__arrow">查看詳情 →</span>
+          </div>
+        </a>
+        <a href="lume.html" class="card">
+          <div class="card__img"><span style="font-size:12px;color:rgba(0,0,0,.25)">AI 示意圖</span></div>
+          <div class="card__body">
+            <p class="card__series">Lume Series</p>
+            <p class="card__name">D 款沙發</p>
+            <p class="card__spec">雙人 · 北歐清爽</p>
+            <span class="card__arrow">查看詳情 →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ═══════════════════════════════════════════
+    CTA (WP: template part — 全站共用)
+    ═══════════════════════════════════════════
+  -->
+  <section class="cta-band" id="cta">
+    <div class="cta-band__inner">
+      <p class="cta-band__eyebrow">In-store Experience</p>
+      <h2 class="cta-band__title">想親眼看看本尊？<br>歡迎預約門市體驗</h2>
+      <p class="cta-band__sub">一對一諮詢，實際觸摸材質、確認尺寸，<br>讓每個細節都符合你的生活方式</p>
+      <a href="#" class="cta-band__btn">預約門市體驗</a>
+    </div>
+  </section>
+
+  <!--
+    ═══════════════════════════════════════════
+    FOOTER (WP: footer.php — 全站共用)
+    ═══════════════════════════════════════════
+  -->
+  <footer class="footer">
+    <div class="footer__grid">
+      <div>
+        <p class="footer__brand-name">Sofa Lab</p>
+        <p class="footer__brand-tagline">讓沙發訂製變得透明、直接，每個環節由你決定。</p>
+      </div>
+      <div class="footer__col">
+        <p class="footer__col-title">Quick Links</p>
+        <a href="../sofa-series.html">沙發系列</a>
+        <a href="../customize-process.html">客製化流程</a>
+        <a href="../about.html">關於我們</a>
+        <a href="../lab-notes.html">Lab Notes</a>
+      </div>
+      <div class="footer__col">
+        <p class="footer__col-title">Contact</p>
+        <p>service@sofalab.tw</p>
+        <p>02-XXXX-XXXX</p>
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+      </div>
+      <div class="footer__col">
+        <p class="footer__col-title">Legal</p>
+        <p>&copy; 2025 Sofa Lab</p>
+        <p>All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelector('.nav__hamburger').addEventListener('click', function () {
+      document.getElementById('nav').classList.toggle('open');
+    });
+
+    document.querySelectorAll('.tabs__btn').forEach(function (btn, i) {
+      btn.addEventListener('click', function () {
+        var parent = this.closest('.tabs');
+        parent.querySelectorAll('.tabs__btn').forEach(function (b) { b.classList.remove('active'); });
+        parent.querySelectorAll('.tabs__panel').forEach(function (p) { p.classList.remove('active'); });
+        this.classList.add('active');
+        parent.querySelectorAll('.tabs__panel')[i].classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>關於我們 — Sofa Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --max-w: 1280px;
+      --px: 80px;
+      --red: #c0392b;
+      --dark: #1a1a1a;
+      --gray-100: #f5f5f5;
+      --gray-200: #e0e0e0;
+      --gray-500: #888;
+      --gray-700: #444;
+    }
+
+    body {
+      font-family: "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+      color: #222;
+      line-height: 1.6;
+      background: #fff;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--px);
+    }
+
+    /* ───── NAV ───── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(250,250,250,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .nav__inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--px);
+      display: flex;
+      align-items: center;
+      height: 64px;
+      gap: 48px;
+    }
+    .nav__logo {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      color: var(--dark);
+    }
+    .nav__links {
+      display: flex;
+      gap: 32px;
+      font-size: 13px;
+      color: var(--gray-700);
+    }
+    .nav__links a { transition: color .15s; }
+    .nav__links a:hover { color: var(--dark); }
+    .nav__links a.active {
+      font-weight: 700;
+      color: var(--dark);
+      position: relative;
+    }
+    .nav__links a.active::after {
+      content: "";
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 100%; height: 2px;
+      background: var(--dark);
+      border-radius: 2px;
+    }
+    .nav__cta {
+      margin-left: auto;
+      padding: 9px 22px;
+      background: var(--dark);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 400;
+      border-radius: 8px;
+      transition: opacity .15s;
+      white-space: nowrap;
+      letter-spacing: .3px;
+    }
+    .nav__cta:hover { opacity: .8; }
+    .nav__hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      margin-left: auto;
+    }
+    .nav__hamburger span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--dark);
+      border-radius: 2px;
+    }
+
+    /* ───── HERO ───── */
+    .hero {
+      position: relative;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+      overflow: hidden;
+    }
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1618220179428-22790b461013?w=1600&q=80') center/cover no-repeat;
+    }
+    .hero__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 70%);
+    }
+    .hero__content {
+      position: relative;
+      z-index: 2;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--px) 80px;
+      width: 100%;
+    }
+    .hero__subtitle {
+      font-size: 13px;
+      color: rgba(255,255,255,.5);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .hero__title {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .hero__desc {
+      font-size: 17px;
+      color: rgba(255,255,255,.8);
+      max-width: 540px;
+    }
+
+    /* ───── SECTION ───── */
+    .section { padding: 72px 0; }
+    .section--gray { background: var(--gray-100); }
+    .section__label {
+      font-size: 12px;
+      color: var(--gray-500);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .section__title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      line-height: 1.3;
+    }
+    .section__title span { color: var(--red); }
+
+    /* ───── BRAND STORY ───── */
+    .story-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .story-layout__img {
+      aspect-ratio: 4/3;
+      background: var(--gray-100);
+      overflow: hidden;
+    }
+    .story-layout__img img { width: 100%; height: 100%; object-fit: cover; }
+    .story-layout__body p {
+      font-size: 15px;
+      color: var(--gray-700);
+      line-height: 1.9;
+      margin-bottom: 20px;
+    }
+    .story-layout__body .highlight {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 16px 0 0;
+      border-top: 2px solid var(--dark);
+    }
+
+    /* ───── COMMITMENT GRID ───── */
+    .commit-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .commit-card {
+      border: 1px solid var(--gray-200);
+      padding: 36px 28px;
+      background: #fff;
+      transition: box-shadow .2s;
+    }
+    .commit-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+    .commit-card__icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .commit-card__num {
+      font-size: 12px;
+      color: var(--red);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .commit-card__title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .commit-card__desc {
+      font-size: 14px;
+      color: var(--gray-500);
+      line-height: 1.7;
+    }
+
+    /* ───── TIMELINE ───── */
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .timeline__item {
+      position: relative;
+      padding-top: 32px;
+      border-top: 2px solid var(--gray-200);
+    }
+    .timeline__item::before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--dark);
+    }
+    .timeline__year {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 6px;
+    }
+    .timeline__title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .timeline__desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      line-height: 1.6;
+    }
+
+    /* ───── STORE ───── */
+    .store-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+    .store-info h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .store-info p {
+      font-size: 14px;
+      color: var(--gray-700);
+      margin-bottom: 4px;
+    }
+    .store-info .info-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .store-info .info-row .label {
+      flex-shrink: 0;
+      font-size: 12px;
+      color: var(--gray-500);
+      width: 52px;
+    }
+    .store-info .info-row .value { font-size: 14px; }
+    .store-map {
+      aspect-ratio: 16/9;
+      background: var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-500);
+      font-size: 14px;
+      border: 1px solid var(--gray-200);
+    }
+    .store-btns { display: flex; gap: 12px; margin-top: 20px; }
+
+    /* ───── BUTTONS ───── */
+    .btn-primary {
+      display: inline-block;
+      padding: 14px 32px;
+      background: var(--red);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .btn-primary:hover { background: #a93226; }
+    .btn-outline {
+      display: inline-block;
+      padding: 14px 28px;
+      border: 2px solid #fff;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      transition: .2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,.15); }
+    .btn-outline--dark {
+      display: inline-block;
+      padding: 12px 24px;
+      border: 1.5px solid var(--dark);
+      font-size: 14px;
+      font-weight: 500;
+      transition: .2s;
+    }
+    .btn-outline--dark:hover { background: var(--dark); color: #fff; }
+
+    /* ───── CTA BANNER ───── */
+    .cta-banner {
+      background: #f0ebe3;
+      border-top: 1px solid #e0d9cf;
+      text-align: center;
+      padding: 64px 20px;
+    }
+    .cta-banner h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
+    .cta-banner p {
+      font-size: 16px;
+      color: #8a7f74;
+      margin-bottom: 28px;
+    }
+    .cta-banner .btn-primary {
+      padding: 16px 40px;
+      font-size: 17px;
+      background: var(--dark);
+    }
+    .cta-banner .btn-primary:hover { background: #333; }
+
+    /* ───── FOOTER ───── */
+    .footer {
+      background: #1e1a15;
+      padding: 40px 0 32px;
+    }
+    .footer .container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      font-size: 14px;
+    }
+    .footer__col h4 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 12px;
+    }
+    .footer__col p, .footer__col a {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+    }
+    .footer__col a:hover { color: rgba(255,255,255,.95); }
+
+    /* ───── STICKY ANCHOR NAV ───── */
+    .anchor-nav {
+      position: sticky;
+      top: 64px;
+      z-index: 150;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .anchor-nav__inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--px);
+      display: flex;
+      gap: 32px;
+      height: 48px;
+      align-items: center;
+    }
+    .anchor-nav__inner a {
+      font-size: 13px;
+      color: var(--gray-500);
+      transition: color .15s;
+    }
+    .anchor-nav__inner a:hover { color: var(--dark); }
+
+    /* ───── RESPONSIVE ───── */
+    @media (max-width: 1024px) {
+      :root { --px: 40px; }
+      .commit-grid { grid-template-columns: 1fr 1fr; }
+      .timeline { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --px: 20px; }
+
+      .nav__links { display: none; }
+      .nav__hamburger { display: flex; }
+      .nav.open .nav__links {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: rgba(250,250,250,0.96);
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--gray-200);
+        box-shadow: 0 4px 12px rgba(0,0,0,.08);
+      }
+
+      .hero { min-height: 0; padding: 48px 0; }
+      .hero__title { font-size: 26px; }
+      .hero__desc { font-size: 15px; }
+
+      .story-layout { grid-template-columns: 1fr; gap: 32px; }
+      .story-layout__img { aspect-ratio: 16/9; }
+
+      .commit-grid { grid-template-columns: 1fr; }
+      .timeline { grid-template-columns: 1fr; }
+      .store-layout { grid-template-columns: 1fr; gap: 32px; }
+
+      .footer .container { grid-template-columns: 1fr 1fr; gap: 20px; }
+
+      .cta-banner .btn-primary { width: 100%; }
+
+      .anchor-nav { overflow-x: auto; }
+      .anchor-nav__inner { gap: 20px; }
+      .anchor-nav__inner a { white-space: nowrap; }
+    }
+
+    @media (max-width: 480px) {
+      :root { --px: 16px; }
+      .hero__title { font-size: 22px; }
+      .hero__content { padding: 40px var(--px); }
+      .section { padding: 48px 0; }
+      .section__title { font-size: 20px; }
+      .footer .container { grid-template-columns: 1fr; text-align: center; }
+      .cta-banner h2 { font-size: 22px; }
+      .cta-banner p { font-size: 14px; }
+      .story-layout__body .highlight { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo">Sofa Lab</a>
+      <div class="nav__links">
+        <a href="index.html">首頁</a>
+        <a href="about.html" class="active">關於我們</a>
+        <a href="sofa-series.html">產品系列</a>
+        <a href="customize-process.html">客製化流程</a>
+        <a href="lab-notes.html">Lab Notes</a>
+      </div>
+      <div class="nav__hamburger" onclick="document.getElementById('nav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </div>
+      <a href="#" class="nav__cta">預約體驗</a>
+    </div>
+  </nav>
+
+  <!-- ANCHOR NAV -->
+  <nav class="anchor-nav">
+    <div class="anchor-nav__inner">
+      <a href="#brand-story">品牌故事</a>
+      <a href="#commitment">我們的堅持</a>
+      <a href="#team-timeline">團隊大事紀</a>
+      <a href="#store">門市資訊</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__bg"></div>
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <div class="hero__subtitle">About Sofa Lab</div>
+      <h1 class="hero__title">讓沙發訂製，<br>變得透明而簡單</h1>
+      <p class="hero__desc">報價、材質、製程全部攤開來說，每個細節都由你決定。</p>
+    </div>
+  </section>
+
+  <!-- 01｜BRAND STORY -->
+  <section class="section" id="brand-story">
+    <div class="container">
+      <div class="section__label">Brand Story</div>
+      <div class="story-layout">
+        <div class="story-layout__img">
+          <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=760&q=80" alt="Sofa Lab 工作室">
+        </div>
+        <div class="story-layout__body">
+          <h2 class="section__title">換沙發，<br>本來不該這麼麻煩</h2>
+          <p>每一次換沙發，都是一場賭注。尺寸量了又量、風格來回比對，送進門才發現跟想像不一樣。住了幾年想擴充，找不到同一款；搬家時整組報廢，心疼又浪費。</p>
+          <p>Sofa Lab 從這些痛點出發，用「模組化」重新思考沙發該有的樣子。每一張沙發由獨立部件組成——扶手、座墊、背靠、腳座——你可以自由組合、日後單獨更換，搬家也能拆開帶走。</p>
+          <p class="highlight">「Lab」不只是實驗室，<br>更是對每個部件的反覆測試與驗證。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02｜OUR COMMITMENT -->
+  <section class="section section--gray" id="commitment">
+    <div class="container">
+      <div class="section__label">Our Commitment</div>
+      <h2 class="section__title">我們的堅持</h2>
+      <div class="commit-grid">
+        <div class="commit-card">
+          <div class="commit-card__icon">🔧</div>
+          <div class="commit-card__num">01</div>
+          <div class="commit-card__title">台灣監製</div>
+          <div class="commit-card__desc">從打版到縫製、從木架到組裝，全程在台灣在地工坊完成。每一張沙發出貨前經過三道品管檢驗，確保結構穩固、車縫平整。</div>
+        </div>
+        <div class="commit-card">
+          <div class="commit-card__icon">🧪</div>
+          <div class="commit-card__num">02</div>
+          <div class="commit-card__title">面料實驗室</div>
+          <div class="commit-card__desc">提供超過 XX 種面料選擇，從貓抓布、涼感布到進口皮革，每款通過耐磨測試與抗污測試。不怕你選，只怕你想不到。</div>
+        </div>
+        <div class="commit-card">
+          <div class="commit-card__icon">🏗️</div>
+          <div class="commit-card__num">03</div>
+          <div class="commit-card__title">結構工藝</div>
+          <div class="commit-card__desc">模組化不代表妥協。金屬骨架經防鏽處理、高密度泡棉經 50,000 次耐坐測試、精密卡榫確保拆裝依然穩固。8-14 週工期，值得等待。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03｜TEAM & TIMELINE -->
+  <section class="section" id="team-timeline">
+    <div class="container">
+      <div class="section__label">Our Story</div>
+      <h2 class="section__title">團隊大事紀</h2>
+
+      <div class="timeline">
+        <div class="timeline__item">
+          <div class="timeline__year">2014</div>
+          <div class="timeline__title">AJ2 愛家概念誕生</div>
+          <div class="timeline__desc">台南家具工廠二代海外留學歸台，創立「屬於台灣自己的居家設計品牌」，從線上出發。</div>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__year">2017</div>
+          <div class="timeline__title">Malmo 馬爾默推出</div>
+          <div class="timeline__desc">第一款兩段式調整沙發問世，成為品牌經典代表作。同年台北首間實體門市開幕。</div>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__year">2022</div>
+          <div class="timeline__title">安眠日常上市</div>
+          <div class="timeline__desc">跨足床墊市場，推出「Better than yesterday 安眠日常」子品牌，從沙發延伸到睡眠。</div>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__year">2024</div>
+          <div class="timeline__title">Sofa Lab 誕生</div>
+          <div class="timeline__desc">AJ2 團隊十年沙發經驗累積，推出全新模組化品牌 Sofa Lab。</div>
+        </div>
+      </div>
+
+
+    </div>
+  </section>
+
+  <!-- 04｜STORE INFO -->
+  <section class="section section--gray" id="store">
+    <div class="container">
+      <div class="section__label">Store Information</div>
+      <div class="store-layout">
+        <div class="store-info">
+          <h3>台北概念店</h3>
+          <div class="info-row">
+            <span class="label">地址</span>
+            <span class="value">台北市大安區 XX 路 XX 號</span>
+          </div>
+          <div class="info-row">
+            <span class="label">電話</span>
+            <span class="value">02-XXXX-XXXX</span>
+          </div>
+          <div class="info-row">
+            <span class="label">LINE</span>
+            <span class="value">@sofalab</span>
+          </div>
+          <div class="info-row">
+            <span class="label">營業</span>
+            <span class="value">週一至週日 11:00–19:00（預約制）</span>
+          </div>
+          <div class="store-btns">
+            <a href="#" class="btn-outline--dark">預約體驗</a>
+            <a href="#" class="btn-outline--dark">Google Maps</a>
+          </div>
+        </div>
+        <div class="store-map">地圖嵌入區塊</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-banner">
+    <h2>準備好開始打造你的沙發了嗎？</h2>
+    <p>從選款到配送，每個環節我們都讓你看得清楚。</p>
+    <a href="#" class="btn-primary">預約門市體驗</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__col">
+        <h4>Sofa Lab</h4>
+        <p>讓沙發訂製變得透明簡單</p>
+      </div>
+      <div class="footer__col">
+        <h4>快速連結</h4>
+        <a href="sofa-series.html">沙發系列</a>
+        <a href="customize-process.html">客製化流程</a>
+        <a href="about.html">關於我們</a>
+        <a href="lab-notes.html">Lab Notes</a>
+      </div>
+      <div class="footer__col">
+        <h4>聯絡資訊 · 社群</h4>
+        <p>service@sofalab.tw</p>
+        <p>02-XXXX-XXXX</p>
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+      </div>
+      <div class="footer__col">
+        <h4>&copy; 2025 Sofa Lab</h4>
+        <p>All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
