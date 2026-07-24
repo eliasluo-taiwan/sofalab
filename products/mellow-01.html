@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sofa Lab Mellow 01 模組沙發商品設定頁。">
+  <title>Mellow 01｜Sofa Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3e649b;
+      --primary-deep: #2e4d79;
+      --paper: #f7f4ee;
+      --warm: #edece2;
+      --mint: #c0e2c5;
+      --mist: #d1daf7;
+      --ink: #38383a;
+      --muted: rgba(56, 56, 58, 0.65);
+      --line: rgba(56, 56, 58, 0.18);
+      --white: #fffefa;
+      --container: 1180px;
+      --gutter: 24px;
+      --radius: 24px;
+      --radius-sm: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Noto Sans TC", "PingFang TC", sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    button { font: inherit; }
+
+    .container {
+      width: min(var(--container), calc(100% - (var(--gutter) * 2)));
+      margin-inline: auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 78px;
+      border-bottom: 1px solid rgba(56, 56, 58, 0.1);
+      background: rgba(247, 244, 238, 0.93);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav__inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .brand__mark {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid var(--ink);
+      color: var(--primary);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .nav__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(56, 56, 58, 0.75);
+      font-size: 13px;
+    }
+
+    .nav__link::after {
+      content: "↗";
+      color: var(--primary);
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .hero {
+      padding: 72px 0 84px;
+    }
+
+    .hero__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.94fr) minmax(420px, 1.06fr);
+      align-items: center;
+      gap: clamp(42px, 7vw, 96px);
+    }
+
+    .eyebrow,
+    .section-kicker {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 0 0 18px;
+      color: rgba(56, 56, 58, 0.62);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before,
+    .section-kicker::after {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    h1,
+    h2,
+    h3,
+    p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 20px;
+      font-family: "Noto Serif TC", "Noto Sans TC", serif;
+      font-size: clamp(48px, 6vw, 82px);
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+
+    .hero__copy {
+      max-width: 440px;
+      margin-bottom: 30px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 45px;
+      padding: 10px 18px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+
+    .button--primary {
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .button--primary:hover { background: var(--primary-deep); }
+
+    .button--soft {
+      color: var(--ink);
+      border-color: var(--line);
+      background: transparent;
+    }
+
+    .button--soft:hover { background: var(--white); }
+
+    .product-gallery { margin: 0; }
+
+    .product-visual {
+      position: relative;
+      min-height: 420px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+
+    .product-visual::before {
+      content: "+";
+      position: absolute;
+      top: 22px;
+      left: 25px;
+      z-index: 1;
+      color: var(--primary);
+      font-size: 31px;
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .product-visual__label {
+      position: absolute;
+      right: 18px;
+      bottom: 14px;
+      z-index: 1;
+      padding: 5px 10px;
+      color: rgba(56, 56, 58, 0.64);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 999px;
+      background: rgba(247, 244, 238, 0.84);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .product-visual img {
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .product-gallery__thumbs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .gallery-thumb {
+      overflow: hidden;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--muted);
+      background: var(--white);
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .gallery-thumb:hover,
+    .gallery-thumb[aria-pressed="true"] {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(62, 100, 155, 0.15);
+    }
+
+    .gallery-thumb img {
+      width: 100%;
+      min-height: 0;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+
+    .gallery-thumb span {
+      display: block;
+      padding: 5px 8px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .overview {
+      padding-bottom: 112px;
+    }
+
+    .overview__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.48fr) minmax(220px, 1fr) minmax(190px, 0.76fr);
+      gap: 22px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.38);
+    }
+
+    .setting-card { padding: 30px; }
+
+    .card h2,
+    .card h3 { letter-spacing: -0.03em; }
+
+    .card h2 {
+      margin-bottom: 22px;
+      font-family: "Noto Serif TC", serif;
+      font-size: 26px;
+    }
+
+    .settings-list { margin: 0; }
+
+    .settings-list > div {
+      display: grid;
+      grid-template-columns: 102px 1fr;
+      gap: 12px;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(56, 56, 58, 0.12);
+    }
+
+    .settings-list > div:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    dt {
+      color: rgba(56, 56, 58, 0.61);
+      font-size: 12px;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .price-card,
+    .fit-card {
+      min-height: 100%;
+      padding: 30px;
+    }
+
+    .price-card { background: rgba(192, 226, 197, 0.36); }
+    .fit-card { background: rgba(237, 236, 226, 0.76); }
+
+    .card__label {
+      margin-bottom: 18px;
+      color: rgba(56, 56, 58, 0.64);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .price {
+      margin-bottom: 14px;
+      font-size: clamp(25px, 2.6vw, 36px);
+      font-weight: 900;
+      line-height: 1.2;
+      letter-spacing: -0.05em;
+    }
+
+    .card__note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.75;
+    }
+
+    .fit-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .fit-card li {
+      padding: 3px 0 3px 17px;
+      position: relative;
+    }
+
+    .fit-card li::before {
+      content: "+";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .section { padding: 96px 0; }
+
+    .section__head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 34px;
+    }
+
+    .section-kicker { margin-bottom: 8px; }
+    .section-kicker::after { order: -1; width: 26px; }
+
+    .section__number {
+      color: rgba(56, 56, 58, 0.48);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .section h2 {
+      margin-bottom: 0;
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.15;
+      letter-spacing: -0.05em;
+    }
+
+    .section__intro {
+      max-width: 370px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .option-card {
+      min-height: 184px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.3);
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .option-card::before {
+      content: "+";
+      align-self: flex-start;
+      margin-bottom: auto;
+      color: var(--primary);
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    .option-card:hover {
+      border-color: rgba(62, 100, 155, 0.55);
+      background: var(--white);
+      transform: translateY(-4px);
+    }
+
+    .option-card h3 {
+      margin-bottom: 5px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .option-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .material-section { padding-top: 82px; }
+
+    .material-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.8fr 0.8fr;
+      gap: 20px;
+    }
+
+    .material-card {
+      min-height: 310px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 26px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.34);
+    }
+
+    .material-card__mark {
+      color: var(--primary);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .material-card h3 {
+      margin-bottom: 0;
+      font-family: "Noto Serif TC", serif;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0 18px;
+    }
+
+    .swatch {
+      width: 100%;
+      aspect-ratio: 1;
+      border: 1px solid rgba(56, 56, 58, 0.08);
+      border-radius: 10px;
+    }
+
+    .material-card--samples { justify-content: flex-start; }
+
+    .material-card--samples .material-card__mark { margin-bottom: 2px; }
+
+    .material-card--samples .material-card__footer { margin-top: 0; }
+
+    .swatch:nth-child(1) { background: #b9c9b7; }
+    .swatch:nth-child(2) { background: #c8d8bf; }
+    .swatch:nth-child(3) { background: #d3e0e4; }
+    .swatch:nth-child(4) { background: #d8d0c5; }
+    .swatch:nth-child(5) { background: #e9e8e2; }
+    .swatch:nth-child(6) { background: #c4d8c2; }
+    .swatch:nth-child(7) { background: #cfdee2; }
+    .swatch:nth-child(8) { background: #d9d0c5; }
+    .swatch:nth-child(9) { background: #ecece6; }
+    .swatch:nth-child(10) { background: #afb2ae; }
+    .swatch:nth-child(11) { background: #d7e3e4; }
+    .swatch:nth-child(12) { background: #ddd5ca; }
+    .swatch:nth-child(13) { background: #ecece5; }
+    .swatch:nth-child(14) { background: #acb0ab; }
+    .swatch:nth-child(15) { background: #bbcbbb; }
+    .swatch:nth-child(16) { background: #ddd6cb; }
+    .swatch:nth-child(17) { background: #e6e7e0; }
+    .swatch:nth-child(18) { background: #aeb1ac; }
+    .swatch:nth-child(19) { background: #bbcab9; }
+    .swatch:nth-child(20) { background: #c8d7bc; }
+
+    .material-card--construction {
+      position: relative;
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .material-card--construction::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.18;
+      background: url("../沙發首頁照.png") center / cover;
+      mix-blend-mode: screen;
+    }
+
+    .material-card--construction > * { position: relative; }
+    .material-card--construction .material-card__mark { color: var(--mint); }
+
+    .material-card--comfort { background: rgba(209, 218, 247, 0.38); }
+
+    .material-card__note {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .material-card--construction .material-card__note { color: rgba(255, 255, 255, 0.78); }
+
+    .cta {
+      margin-top: 96px;
+      padding: 72px 0;
+      background: rgba(192, 226, 197, 0.35);
+      border-top: 1px solid rgba(56, 56, 58, 0.1);
+      border-bottom: 1px solid rgba(56, 56, 58, 0.1);
+    }
+
+    .cta__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .cta h2 {
+      max-width: 600px;
+      margin: 0;
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(34px, 4.5vw, 58px);
+      line-height: 1.13;
+      letter-spacing: -0.06em;
+    }
+
+    .cta__actions { flex-shrink: 0; }
+    .cta__actions .button--soft { background: rgba(255, 255, 255, 0.5); }
+
+    .footer {
+      padding: 28px 0;
+      color: rgba(56, 56, 58, 0.57);
+      font-size: 11px;
+    }
+
+    .footer__inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .hero__grid { grid-template-columns: 1fr; }
+      .hero__content { max-width: 650px; }
+      .product-visual { min-height: 390px; }
+      .product-visual img { min-height: 390px; }
+      .overview__grid { grid-template-columns: 1fr 1fr; }
+      .setting-card { grid-column: 1 / -1; }
+      .material-grid { grid-template-columns: 1fr 1fr; }
+      .material-card:first-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 640px) {
+      :root { --gutter: 18px; }
+      body { font-size: 14px; }
+      .nav { height: 66px; }
+      .nav__link { font-size: 11px; }
+      .nav__link::after { display: none; }
+      .hero { padding: 48px 0 62px; }
+      h1 { font-size: clamp(46px, 14vw, 62px); }
+      .hero__copy { font-size: 15px; }
+      .product-visual,
+      .product-visual img { min-height: 310px; }
+      .product-gallery__thumbs { gap: 8px; }
+      .gallery-thumb span { padding: 4px 7px 5px; font-size: 10px; }
+      .overview { padding-bottom: 70px; }
+      .overview__grid,
+      .option-grid,
+      .material-grid { grid-template-columns: 1fr; }
+      .setting-card,
+      .material-card:first-child { grid-column: auto; }
+      .setting-card,
+      .price-card,
+      .fit-card { padding: 24px; }
+      .section { padding: 70px 0; }
+      .section__head,
+      .cta__inner { display: block; }
+      .section__intro { margin-top: 18px; }
+      .option-card { min-height: 152px; }
+      .material-card { min-height: 260px; }
+      .cta { margin-top: 70px; padding: 52px 0; }
+      .cta__actions { margin-top: 26px; }
+      .footer__inner { flex-direction: column; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="brand" href="../index.html" aria-label="回到 Sofa Lab 首頁">
+        <span class="brand__mark">+</span>
+        <span>(Sofa)<br>Lab</span>
+      </a>
+      <a class="nav__link" href="#custom-options">沙發款式／查看設定</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="hero__content">
+          <p class="eyebrow">Sofa settings</p>
+          <h1>Mellow 01</h1>
+          <p class="hero__copy">適合放鬆、長時間坐臥的柔軟比例。Mellow 01 以能自在伸展的座深為起點，讓尺寸、坐感與布料，跟著你的生活慢慢定下來。</p>
+          <div class="button-row">
+            <a class="button button--primary" href="#booking">預約討論這張沙發</a>
+            <a class="button button--soft" href="#custom-options">回到款式列表</a>
+          </div>
+        </div>
+        <figure class="product-gallery" aria-label="Mellow 01 商品圖片">
+          <div class="product-visual">
+            <img id="product-gallery-image" src="assets/mellow-01/front.png" alt="Mellow 01 雙人座沙發正面，右側頭枕升起">
+            <span class="product-visual__label" id="product-gallery-label">MELLOW 01 · 正面</span>
+          </div>
+          <div class="product-gallery__thumbs" aria-label="商品圖片視角">
+            <button class="gallery-thumb" type="button" aria-pressed="true" data-image="assets/mellow-01/front.png" data-alt="Mellow 01 雙人座沙發正面，右側頭枕升起" data-view="正面">
+              <img src="assets/mellow-01/front.png" alt="" loading="eager"><span>正面</span>
+            </button>
+            <button class="gallery-thumb" type="button" aria-pressed="false" data-image="assets/mellow-01/side.png" data-alt="Mellow 01 雙人座沙發側面，頭枕可向上調整" data-view="側面">
+              <img src="assets/mellow-01/side.png" alt="" loading="lazy"><span>側面</span>
+            </button>
+            <button class="gallery-thumb" type="button" aria-pressed="false" data-image="assets/mellow-01/back.png" data-alt="Mellow 01 雙人座沙發背面，顯示可調頭枕滑軌" data-view="背面">
+              <img src="assets/mellow-01/back.png" alt="" loading="lazy"><span>背面</span>
+            </button>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="overview" aria-label="Mellow 01 基本設定">
+      <div class="container overview__grid">
+        <article class="card setting-card">
+          <h2>基本設定</h2>
+          <dl class="settings-list">
+            <div><dt>尺寸範圍</dt><dd>依正式丈量後確認</dd></div>
+            <div><dt>坐深</dt><dd>可依使用習慣討論</dd></div>
+            <div><dt>材質</dt><dd>布料、色票與清潔需求可選</dd></div>
+            <div><dt>模組</dt><dd>直排、L 型或其他組合方向</dd></div>
+          </dl>
+        </article>
+        <article class="card price-card">
+          <p class="card__label">牌價參考</p>
+          <p class="price">NT$ XX,XXX 起</p>
+          <p class="card__note">實際價格依尺寸、材質、模組與打樣確認。此區只出現在商品詳細頁。</p>
+        </article>
+        <article class="card fit-card">
+          <p class="card__label">適合誰</p>
+          <ul>
+            <li>長時間躺坐</li>
+            <li>希望坐感柔軟</li>
+            <li>需要可討論尺寸</li>
+            <li>喜歡低座生活感</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="custom-options">
+      <div class="container">
+        <div class="section__head">
+          <div>
+            <p class="section-kicker"><span class="section__number">01</span> Custom options</p>
+            <h2>可調整項目</h2>
+          </div>
+          <p class="section__intro">每一個選項都從你的空間與日常出發，先試坐，再找出最舒服的組合。</p>
+        </div>
+        <div class="option-grid">
+          <article class="option-card"><h3>尺寸</h3><p>依空間、使用習慣與現場樣本討論。</p></article>
+          <article class="option-card"><h3>坐感</h3><p>從支撐到柔軟，找適合你的比例。</p></article>
+          <article class="option-card"><h3>布料</h3><p>依生活需求挑選觸感、顏色與機能。</p></article>
+          <article class="option-card"><h3>扶手</h3><p>調整扶手寬度，留下喜歡的靠坐姿勢。</p></article>
+          <article class="option-card"><h3>腳座</h3><p>從高度、材質到掃地機器人的通行距離。</p></article>
+          <article class="option-card"><h3>模組</h3><p>直排、L 型、貴妃椅，依生活動線安排。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section material-section">
+      <div class="container">
+        <div class="section__head">
+          <div>
+            <p class="section-kicker"><span class="section__number">02</span> Material detail</p>
+            <h2>材質與細節</h2>
+          </div>
+          <p class="section__intro">透過布料、結構與坐感試驗，把一張沙發做成真正會想久待的地方。</p>
+        </div>
+        <div class="material-grid">
+          <article class="material-card material-card--samples">
+            <span class="material-card__mark">+</span>
+            <div class="swatches" aria-label="布料色票示意">
+              <span class="swatch"></span><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span>
+              <span class="swatch"></span><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span>
+              <span class="swatch"></span><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span>
+              <span class="swatch"></span><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span>
+            </div>
+            <div class="material-card__footer"><h3>材質樣本</h3><p class="material-card__note">Fabric notes</p></div>
+          </article>
+          <article class="material-card material-card--construction">
+            <span class="material-card__mark">+</span>
+            <div><h3>縫線／扶手／腳座細節</h3><p class="material-card__note">細節是日常使用後，仍然耐看的理由。</p></div>
+          </article>
+          <article class="material-card material-card--comfort">
+            <span class="material-card__mark">+</span>
+            <div><h3>坐感測試紀錄</h3><p class="material-card__note">從腰部支撐、座深到起身的感受，一起試過再決定。</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="booking">
+      <div class="container cta__inner">
+        <h2>帶著這張沙發，<br>來討論你的尺寸。</h2>
+        <div class="button-row cta__actions">
+          <a class="button button--primary" href="https://aj2.tw/landingpage_studio">預約工作坊體驗</a>
+          <a class="button button--soft" href="#custom-options">查看其他款式</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© Sofa Lab</span>
+      <span>Mellow 01 · Product setting page</span>
+    </div>
+  </footer>
+
+  <script>
+    const galleryImage = document.querySelector("#product-gallery-image");
+    const galleryLabel = document.querySelector("#product-gallery-label");
+    const galleryThumbs = document.querySelectorAll(".gallery-thumb");
+
+    galleryThumbs.forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        galleryImage.src = thumb.dataset.image;
+        galleryImage.alt = thumb.dataset.alt;
+        galleryLabel.textContent = `MELLOW 01 · ${thumb.dataset.view}`;
+        galleryThumbs.forEach((item) => item.setAttribute("aria-pressed", item === thumb));
+      });
+    });
+  </script>
+</body>
+</html>
