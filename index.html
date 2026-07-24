@@ -1363,14 +1363,23 @@
 
       .discussion-grid,
       .material-workshop,
-      .module-row .module-card:nth-child(2),
-      .module-row .module-card:nth-child(4),
       .faq-grid .faq-card:nth-child(3) {
         display: none;
       }
 
       .module-row {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(250px, 82vw);
         gap: 12px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .module-row .module-card {
+        scroll-snap-align: start;
       }
 
       .module-card {
@@ -1541,14 +1550,13 @@
         <span class="nav__opening">2026.09.15 Opening</span>
       </div>
       <div class="nav__links">
-        <a href="#principles">三件事</a>
+        <a href="#principles">概念</a>
         <a href="#modules">沙發款式</a>
         <a href="#flow">客製流程</a>
-        <a href="#materials">材質實驗室</a>
-        <a href="#faq">常見問題</a>
+        <a href="#materials">工作坊</a>
       </div>
       <span class="nav__mobile-plus" aria-hidden="true">+</span>
-      <a class="button button--primary" href="#cta">預約討論</a>
+      <a class="button button--primary" href="#cta">預約體驗</a>
     </div>
   </nav>
 
