@@ -540,7 +540,8 @@
 
     .material-card--construction {
       position: relative;
-      color: #fff;
+      color: var(--warm);
+      border-color: var(--primary-deep);
       background: var(--primary);
     }
 
@@ -556,7 +557,12 @@
     .material-card--construction > * { position: relative; }
     .material-card--construction .material-card__mark { color: var(--mint); }
 
-    .material-card--comfort { background: rgba(209, 218, 247, 0.38); }
+    .material-card--comfort {
+      border-color: rgba(62, 100, 155, 0.28);
+      background: var(--mist);
+    }
+
+    .material-card--comfort .material-card__mark { color: var(--primary); }
 
     .material-card__note {
       margin: 14px 0 0;
@@ -564,14 +570,14 @@
       font-size: 12px;
     }
 
-    .material-card--construction .material-card__note { color: rgba(255, 255, 255, 0.78); }
+    .material-card--construction .material-card__note { color: rgba(237, 236, 226, 0.78); }
 
     .cta {
       margin-top: 96px;
       padding: 72px 0;
-      background: rgba(192, 226, 197, 0.35);
-      border-top: 1px solid rgba(56, 56, 58, 0.1);
-      border-bottom: 1px solid rgba(56, 56, 58, 0.1);
+      background: var(--primary);
+      border-top: 1px solid var(--primary-deep);
+      border-bottom: 1px solid var(--primary-deep);
     }
 
     .cta__inner {
@@ -584,6 +590,7 @@
     .cta h2 {
       max-width: 600px;
       margin: 0;
+      color: var(--warm);
       font-family: "Noto Serif TC", serif;
       font-size: clamp(34px, 4.5vw, 58px);
       line-height: 1.13;
@@ -591,7 +598,24 @@
     }
 
     .cta__actions { flex-shrink: 0; }
-    .cta__actions .button--soft { background: rgba(255, 255, 255, 0.5); }
+    .cta__actions .button--primary {
+      color: var(--ink);
+      background: var(--warm);
+    }
+
+    .cta__actions .button--primary:hover { background: var(--mint); }
+
+    .cta__actions .button--soft {
+      color: var(--warm);
+      border-color: rgba(237, 236, 226, 0.65);
+      background: transparent;
+    }
+
+    .cta__actions .button--soft:hover {
+      color: var(--ink);
+      border-color: var(--mist);
+      background: var(--mist);
+    }
 
     .footer {
       padding: 28px 0;
@@ -657,7 +681,7 @@
         <span class="brand__mark">+</span>
         <span>(Sofa)<br>Lab</span>
       </a>
-      <a class="nav__link" href="#custom-options">沙發款式／查看設定</a>
+      <a class="nav__link" href="../index.html">回到首頁</a>
     </div>
   </header>
 
