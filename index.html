@@ -192,11 +192,42 @@
       transform: scaleX(1);
     }
 
-    .nav__mobile-plus {
+    .nav__booking,
+    .nav__menu-toggle {
       display: none;
-      color: var(--ink);
-      font-size: 22px;
-      line-height: 1;
+    }
+
+    .nav__menu-toggle {
+      width: 36px;
+      height: 36px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0;
+      border: 1px solid rgba(56, 56, 58, 0.12);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.78);
+      cursor: pointer;
+    }
+
+    .nav__menu-toggle span {
+      width: 16px;
+      height: 1px;
+      background: var(--ink);
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .nav__menu-toggle.is-open span:first-child {
+      transform: translateY(5px) rotate(45deg);
+    }
+
+    .nav__menu-toggle.is-open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav__menu-toggle.is-open span:last-child {
+      transform: translateY(-5px) rotate(-45deg);
     }
 
     .nav__opening {
@@ -353,6 +384,19 @@
       background: rgba(251, 250, 246, 0.96);
       box-shadow: var(--shadow);
       transform: none;
+    }
+
+    .hero-card--photo {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .hero-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      object-position: center;
     }
 
     .hero-card__label {
@@ -655,6 +699,17 @@
       border: 1px solid rgba(56, 56, 58, 0.08);
       overflow: hidden;
       aspect-ratio: 1.08 / 0.88;
+    }
+
+    .module-illustration--photo {
+      padding: 0;
+      background: #fff;
+    }
+
+    .module-product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     .module-illustration__base {
@@ -1046,12 +1101,53 @@
       }
 
       .nav__inner {
+        position: relative;
         min-height: 52px;
         gap: 12px;
       }
 
       .nav__links {
         display: none;
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        left: 50%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        padding: 10px;
+        border: 1px solid rgba(56, 56, 58, 0.1);
+        border-radius: 16px;
+        background: rgba(247, 244, 238, 0.98);
+        box-shadow: 0 14px 28px rgba(56, 56, 58, 0.1);
+      }
+
+      .nav__links.is-open {
+        display: flex;
+      }
+
+      .nav__links a {
+        padding: 10px 12px;
+        border-radius: 10px;
+        color: var(--ink);
+      }
+
+      .nav__links a::after {
+        display: none;
+      }
+
+      .nav__links .nav__booking {
+        display: inline-flex;
+        justify-content: center;
+        margin-top: 4px;
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .nav__links .nav__booking:hover,
+      .nav__links .nav__booking:focus-visible {
+        background: var(--primary-deep);
+        color: #fff;
       }
 
       .nav__opening {
@@ -1062,8 +1158,8 @@
         display: none;
       }
 
-      .nav__mobile-plus {
-        display: block;
+      .nav__menu-toggle {
+        display: inline-flex;
       }
 
       .brand {
@@ -1161,6 +1257,14 @@
         padding: 14px;
         border-radius: 18px;
         transform: none;
+      }
+
+      .hero-card--photo {
+        padding: 0;
+      }
+
+      .hero-image {
+        aspect-ratio: 16 / 10;
       }
 
       .hero-visual {
@@ -1402,6 +1506,10 @@
         border-radius: 14px;
       }
 
+      .module-illustration--photo {
+        padding: 0;
+      }
+
       .module-name {
         margin-bottom: 4px;
       }
@@ -1559,13 +1667,16 @@
         </a>
         <span class="nav__opening">2026.09.15 Opening</span>
       </div>
-      <div class="nav__links">
+      <div class="nav__links" id="mobile-menu">
         <a href="#principles">概念</a>
         <a href="#modules">沙發款式</a>
         <a href="#flow">客製流程</a>
         <a href="#materials">工作坊</a>
+        <a class="nav__booking" href="#cta">預約體驗</a>
       </div>
-      <span class="nav__mobile-plus" aria-hidden="true">+</span>
+      <button class="nav__menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="開啟選單">
+        <span></span><span></span><span></span>
+      </button>
       <a class="button button--primary" href="#cta">預約體驗</a>
     </div>
   </nav>
@@ -1588,29 +1699,9 @@
         <div class="hero__scroll">Scroll</div>
       </div>
 
-      <div class="hero-visual reveal delay-2" aria-hidden="true">
-        <div class="hero-card">
-          <p class="hero-card__label">OPEN<br>WORKSHOP</p>
-          <div class="studio-scene">
-            <div class="studio-scene__board">
-              <span></span><span></span><span></span>
-              <span></span><span></span><span></span>
-            </div>
-            <div class="studio-table">
-              <div class="studio-table__top"></div>
-              <div class="studio-table__leg studio-table__leg--a"></div>
-              <div class="studio-table__leg studio-table__leg--b"></div>
-              <div class="studio-table__leg studio-table__leg--c"></div>
-              <div class="studio-table__leg studio-table__leg--d"></div>
-              <div class="sofa-mini">
-                <div class="sofa-mini__back"></div>
-                <div class="sofa-mini__seat"></div>
-                <div class="sofa-mini__arm sofa-mini__arm--left"></div>
-                <div class="sofa-mini__arm sofa-mini__arm--right"></div>
-              </div>
-              <div class="cabinet-mini"></div>
-            </div>
-          </div>
+      <div class="hero-visual reveal delay-2">
+        <div class="hero-card hero-card--photo">
+          <img class="hero-image" src="沙發首頁照.png" alt="明亮客廳中的米白色沙發">
         </div>
       </div>
     </div>
@@ -1682,12 +1773,8 @@
 
           <div class="module-row">
             <a class="module-card module-card--link reveal" href="products/mellow-01.html" aria-label="查看 Mellow 01 商品設定">
-              <div class="module-illustration">
-                <div class="module-illustration__base"></div>
-                <div class="module-illustration__back"></div>
-                <div class="module-illustration__arm module-illustration__arm--left"></div>
-                <div class="module-illustration__arm module-illustration__arm--right"></div>
-                <div class="module-illustration__accent"></div>
+              <div class="module-illustration module-illustration--photo">
+                <img class="module-product-image" src="products/assets/mellow-01/front.png" alt="Mellow 01 正面沙發">
               </div>
               <h3 class="module-name">Mellow 01</h3>
               <p class="module-copy">低扶手、坐感柔和的日常休息款。</p>
@@ -1963,6 +2050,30 @@
     }, { threshold: 0.14, rootMargin: "0px 0px -40px 0px" });
 
     document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
+
+    const navMenuToggle = document.querySelector(".nav__menu-toggle");
+    const navMenu = document.querySelector(".nav__links");
+
+    if (navMenuToggle && navMenu) {
+      const closeNavMenu = () => {
+        navMenu.classList.remove("is-open");
+        navMenuToggle.classList.remove("is-open");
+        navMenuToggle.setAttribute("aria-expanded", "false");
+        navMenuToggle.setAttribute("aria-label", "開啟選單");
+      };
+
+      navMenuToggle.addEventListener("click", () => {
+        const isOpen = navMenu.classList.toggle("is-open");
+        navMenuToggle.classList.toggle("is-open", isOpen);
+        navMenuToggle.setAttribute("aria-expanded", String(isOpen));
+        navMenuToggle.setAttribute("aria-label", isOpen ? "關閉選單" : "開啟選單");
+      });
+
+      navMenu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeNavMenu));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeNavMenu();
+      });
+    }
 
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       anchor.addEventListener("click", (event) => {
